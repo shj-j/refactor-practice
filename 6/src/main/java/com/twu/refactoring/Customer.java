@@ -6,6 +6,17 @@ import java.util.Iterator;
 public class Customer {
 
 	private String name;
+	private int regularMovieAdds = 2;
+	private double childrenMovieAdds = 1.5;
+
+	private int regularMovieMinimum = 2;
+	private int childrenMovieMinimum = 3;
+
+	private double weightsForRegular = 1.5;
+	private double weightsForChildren = 1.5;
+	private int weightsForNewRelease = 3;
+
+
 	private ArrayList<Rental> rentalList = new ArrayList<Rental>();
 
 	public Customer(String name) {
@@ -26,28 +37,27 @@ public class Customer {
 		Iterator<Rental> rentals = rentalList.iterator();
 		String result = "Rental Record for " + getName() + "\n";
 		while (rentals.hasNext()) {
-			double thisAmount = 0;
+			double movieAmount = 0;
 			Rental each = rentals.next();
 
 			// determine amounts for each line
 			switch (each.getMovie().getPriceCode()) {
 			case Movie.REGULAR:
-				thisAmount += 2;
-				if (each.getDaysRented() > 2)
-					thisAmount += (each.getDaysRented() - 2) * 1.5;
+				movieAmount += regularMovieAdds;
+				if (each.getDaysRented() > regularMovieMinimum)
+					movieAmount += (each.getDaysRented() - regularMovieMinimum) * weightsForRegular;
 				break;
 			case Movie.NEW_RELEASE:
-				thisAmount += each.getDaysRented() * 3;
+				movieAmount += each.getDaysRented() * weightsForNewRelease;
 				break;
 			case Movie.CHILDRENS:
-				thisAmount += 1.5;
-				if (each.getDaysRented() > 3)
-					thisAmount += (each.getDaysRented() - 3) * 1.5;
+				movieAmount += childrenMovieAdds;
+				if (each.getDaysRented() > childrenMovieMinimum)
+					movieAmount += (each.getDaysRented() - childrenMovieMinimum) * weightsForChildren;
 				break;
 
 			}
 
-			// add frequent renter points
 			frequentRenterPoints++;
 			// add bonus for a two day new release rental
 			if ((each.getMovie().getPriceCode() == Movie.NEW_RELEASE)
@@ -56,8 +66,8 @@ public class Customer {
 
 			// show figures for this rental
 			result += "\t" + each.getMovie().getTitle() + "\t"
-					+ String.valueOf(thisAmount) + "\n";
-			totalAmount += thisAmount;
+					+ String.valueOf(movieAmount) + "\n";
+			totalAmount += movieAmount;
 
 		}
 		// add footer lines
